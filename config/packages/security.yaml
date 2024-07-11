@@ -17,6 +17,11 @@ security:
         #     lazy: true
         #     provider: app_user_provider
 
+        reset_password:
+            pattern: ^/api/(request-password-reset|reset-password)
+            stateless: true
+            security: false
+
         login:
             pattern: ^/api/login
             stateless: true
@@ -47,6 +52,8 @@ security:
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+        - { path: ^/api/request-password-reset, roles: PUBLIC_ACCESS }
+        - { path: ^/api/reset-password, roles: PUBLIC_ACCESS }
 
 
 when@test:

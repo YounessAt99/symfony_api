@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -30,6 +32,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    /**
+     * @var Collection<int, PasswordResetToken>
+     */
+    #[ORM\OneToMany(targetEntity: PasswordResetToken::class, mappedBy: 'user')]
+    private Collection $passwordResetTokens;
+
+    public function __construct()
+    {
+        $this->passwordResetTokens = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -112,5 +125,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, PasswordResetToken>
+     */
+    public function getPasswordResetTokens(): Collection
+    {
+        return $this->passwordResetTokens;
+    }
+
+    public function addPasswordResetToken(PasswordResetToken $passwordResetToken): static
+    {
+        if (!$this->passwordResetTokens->contains($passwordResetToken)) {
+            $this->passwordResetTokens->add($passwordResetToken);
+            $passwordResetToken->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePasswordResetToken(PasswordResetToken $passwordResetToken): static
+    {
+        if ($this->passwordResetTokens->removeElement($passwordResetToken)) {
+            // set the owning side to null (unless already changed)
+            if ($passwordResetToken->getUser() === $this) {
+                $passwordResetToken->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }

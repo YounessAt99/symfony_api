@@ -26,7 +26,7 @@ class BookController extends AbstractController
     )
     {}
 
-    #[Route('/api/books', name: 'app_book')]
+    #[Route('/api/books', name: 'app_book', methods: ['GET'])]
     public function index(Request $request): JsonResponse
     {
         // $bookList = $this->bookRepository->findAll();
@@ -56,8 +56,8 @@ class BookController extends AbstractController
        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
    }
 
-   #[Route('/api/bookss', name:"createBook", methods: ['POST'])]
-   #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour créer un livre')]
+   #[Route('/api/books', name:"createBook", methods: ['POST'])]
+   #[IsGranted('ROLE_ADMIN', message: 'You do not have sufficient rights to create a book')]
    public function createBook(Request $request, UrlGeneratorInterface $urlGenerator, ValidatorInterface $validator): JsonResponse 
    {
        $book = $this->serializer->deserialize($request->getContent(), Book::class, 'json');
