@@ -41,7 +41,7 @@ class PasswordResetController extends AbstractController
             ->from('youness@example.com')
             ->to($user->getEmail())
             ->subject('Your password reset request')
-            ->html('<p>To reset your password, please click the following link: <a href="https://your-app.com/reset-password/' . $token->getToken() . '">Reset Password</a></p>');
+            ->html('<p>To reset your password, please click the following link: <a href="http://localhost:8000/reset-password-page/' . $token->getToken() . '">Reset Password</a></p>');
 
         $mailer->send($email);
 

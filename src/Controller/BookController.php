@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Book;
 use App\Repository\AuthorRepository;
 use App\Repository\BookRepository;
+use Doctrine\Migrations\Configuration\EntityManager\ManagerRegistryEntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -106,6 +107,17 @@ class BookController extends AbstractController
         $this->em->flush();
 
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+    }
+
+    #[Route('/reset-password-page/{token}', name:"reset-password-page", methods:['Get'])]
+    public function resetPasswordPage($token)
+    {
+        // $token = $request->query->get('token', '');
+        // dd($token);
+        return $this->render('resetPasswordPage.html.twig', [
+            // 'token' => $token,
+            'token' => htmlspecialchars($token),
+        ]);
     }
 
 }

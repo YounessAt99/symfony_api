@@ -51,6 +51,9 @@ security:
     access_control:
         - { path: ^/api/register, roles: PUBLIC_ACCESS }
         - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/apip, roles: PUBLIC_ACCESS }
+        - { path: ^/reset-password-page, roles: PUBLIC_ACCESS }
+        - { path: ^/apip/, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/api/request-password-reset, roles: PUBLIC_ACCESS }
         - { path: ^/api/reset-password, roles: PUBLIC_ACCESS }

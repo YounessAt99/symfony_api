@@ -135,25 +135,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->passwordResetTokens;
     }
 
-    public function addPasswordResetToken(PasswordResetToken $passwordResetToken): static
-    {
-        if (!$this->passwordResetTokens->contains($passwordResetToken)) {
-            $this->passwordResetTokens->add($passwordResetToken);
-            $passwordResetToken->setUser($this);
-        }
+    // public function addPasswordResetToken(PasswordResetToken $passwordResetToken): static
+    // {
+    //     if (!$this->passwordResetTokens->contains($passwordResetToken)) {
+    //         $this->passwordResetTokens->add($passwordResetToken);
+    //         $passwordResetToken->setUser($this);
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
-    public function removePasswordResetToken(PasswordResetToken $passwordResetToken): static
-    {
-        if ($this->passwordResetTokens->removeElement($passwordResetToken)) {
-            // set the owning side to null (unless already changed)
-            if ($passwordResetToken->getUser() === $this) {
-                $passwordResetToken->setUser(null);
-            }
-        }
+    // public function removePasswordResetToken(PasswordResetToken $passwordResetToken): static
+    // {
+    //     if ($this->passwordResetTokens->removeElement($passwordResetToken)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($passwordResetToken->getUser() === $this) {
+    //             $passwordResetToken->setUser(null);
+    //         }
+    //     }
 
-        return $this;
-    }
+    //     return $this;
+    // }
 }
