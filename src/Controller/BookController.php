@@ -109,16 +109,6 @@ class BookController extends AbstractController
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
-    #[Route('/reset-password-page/{token}', name:"reset-password-page", methods:['Get'])]
-    public function resetPasswordPage($token)
-    {
-        // $token = $request->query->get('token', '');
-        // dd($token);
-        return $this->render('resetPasswordPage.html.twig', [
-            // 'token' => $token,
-            'token' => htmlspecialchars($token),
-        ]);
-    }
 
 }
 

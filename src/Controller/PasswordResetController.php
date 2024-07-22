@@ -72,4 +72,14 @@ class PasswordResetController extends AbstractController
 
         return $this->json(['message' => 'Password reset successfully'], JsonResponse::HTTP_OK);
     }
+
+    #[Route('/reset-password-page/{token}', name:"reset-password-page", methods:['Get'])]
+    public function resetPasswordPage($token)
+    {
+        return $this->render('resetPasswordPage.html.twig', [
+            // 'token' => $token,
+            'token' => htmlspecialchars($token),
+        ]);
+    }
+
 }
