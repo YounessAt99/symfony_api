@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\Book;
 use App\Repository\AuthorRepository;
 use App\Repository\BookRepository;
-use Doctrine\Migrations\Configuration\EntityManager\ManagerRegistryEntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,11 +29,11 @@ class BookController extends AbstractController
     #[Route('/api/books', name: 'app_book', methods: ['GET'])]
     public function index(Request $request): JsonResponse
     {
-        // $bookList = $this->bookRepository->findAll();
+        $bookList = $this->bookRepository->findAll();
 
-        $page = $request->get('page', 1);
-        $limit = $request->get('limit', 3);
-        $bookList = $this->bookRepository->findAllWithPagination($page, $limit);
+        // $page = $request->get('page', 1);
+        // $limit = $request->get('limit', 3);
+        // $bookList = $this->bookRepository->findAllWithPagination($page, $limit);
 
         $jsonBookList = $this->serializer->serialize($bookList, 'json', ['groups' => 'getBooks']);
 
@@ -67,7 +66,7 @@ class BookController extends AbstractController
         $errors = $validator->validate($book);
 
         if ($errors->count() > 0) {
-            return new JsonResponse($this->serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+            return new JsonResponse($this->serializer->serialize($errors, 'json'), Response::HTTP_BAD_REQUEST, [], true);
         }
        
         $content = $request->toArray();
@@ -108,7 +107,6 @@ class BookController extends AbstractController
 
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
-
 
 }
 
