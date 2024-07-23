@@ -32,6 +32,10 @@ class Book
     #[Groups("getBooks")]
     private ?Author $author = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups("getBooks")]
+    private ?string $image = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -69,6 +73,18 @@ class Book
     public function setAuthor(?Author $author): static
     {
         $this->author = $author;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): static
+    {
+        $this->image = $image;
 
         return $this;
     }
