@@ -154,29 +154,82 @@ class BookController extends AbstractController
         return new JsonResponse($jsonBook, Response::HTTP_CREATED, ["Location" => $location], true);
     }
 
-   #[Route('/api/books/{id}', name:"updateBook", methods:['PUT'])]
-   #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour éditer un livre')]
-   public function updateBook(Request $request, Book $currentBook, ValidatorInterface $validator)
-   {
-        $newBook = $this->serializer->deserialize($request->getContent(), Book::class, 'json');
-        $currentBook->setTitle($newBook->getTitle());
-        $currentBook->setCoverText($newBook->getCoverText());
+//    #[Route('/api/books/{id}', name:"updateBook", methods:['PUT'])]
+//    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour éditer un livre')]
+//    public function updateBook(Request $request, Book $currentBook, ValidatorInterface $validator)
+//     {
+//         $newBook = $this->serializer->deserialize($request->getContent(), Book::class, 'json');
+//         $currentBook->setTitle($newBook->getTitle());
+//         $currentBook->setCoverText($newBook->getCoverText());
 
-        // On vérifie les erreurs
-        $errors = $validator->validate($currentBook);
-        if ($errors->count() > 0) {
-            return new JsonResponse($this->serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+//         // On vérifie les erreurs
+//         $errors = $validator->validate($currentBook);
+//         if ($errors->count() > 0) {
+//             return new JsonResponse($this->serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST, [], true);
+//         }
+
+//         $content = $request->toArray();
+//         $idAuthor = $content['idAuthor'] ?? -1;
+
+//         $currentBook->setAuthor($this->authorRepository->find($idAuthor));
+
+//         $this->em->persist($currentBook);
+//         $this->em->flush();
+
+//         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+//     }
+    
+    #[Route('/api/books/{id}', name: "updateBook", methods: ['PUT', 'POST'])]
+    #[IsGranted('ROLE_ADMIN', message: 'Vous n\'avez pas les droits suffisants pour éditer un livre')]
+    public function updateBook(Request $request, Book $currentBook, ValidatorInterface $validator): JsonResponse
+    {
+        $title = $request->request->get('title');
+        $coverText = $request->request->get('coverText');
+        $idAuthor = $request->request->get('idAuthor');
+        // dd($request->get('title'));
+
+        if (!$title || !$coverText || !$idAuthor) {
+            return new JsonResponse(['status' => 400, 'message' => 'Missing required fields'], Response::HTTP_BAD_REQUEST);
         }
 
-        $content = $request->toArray();
-        $idAuthor = $content['idAuthor'] ?? -1;
+        $content = $request->request->all();
+        $currentBook->setTitle($content['title']);
+        $currentBook->setCoverText($content['coverText']);
 
-        $currentBook->setAuthor($this->authorRepository->find($idAuthor));
+        // Validate the author
+        $idAuthor = $content['idAuthor'] ?? -1;
+        $author = $this->authorRepository->find($idAuthor);
+        if (!$author) {
+            return new JsonResponse(['error' => 'Author not found'], Response::HTTP_BAD_REQUEST);
+        }
+        $currentBook->setAuthor($author);
+
+        // Handle image upload
+        if ($request->files->has('image')) {
+            $imageFile = $request->files->get('image');
+            $imageFilename = uniqid() . '.' . $imageFile->guessExtension();
+
+            try {
+                $imageFile->move(
+                    $this->getParameter('kernel.project_dir') . '/public/uploads/images',
+                    $imageFilename
+                );
+                $currentBook->setImage($imageFilename);
+            } catch (FileException $e) {
+                return new JsonResponse(['error' => 'Failed to upload image'], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        // Validate the book entity
+        $errors = $validator->validate($currentBook);
+        if ($errors->count() > 0) {
+            return new JsonResponse($this->serializer->serialize($errors, 'json'), Response::HTTP_BAD_REQUEST, [], true);
+        }
 
         $this->em->persist($currentBook);
         $this->em->flush();
 
-        return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
+        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
-}
 
+}
