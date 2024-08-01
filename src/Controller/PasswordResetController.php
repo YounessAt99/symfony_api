@@ -1,5 +1,4 @@
 <?php
-// src/Controller/PasswordResetController.php
 namespace App\Controller;
 
 use App\Entity\PasswordResetToken;
@@ -38,7 +37,7 @@ class PasswordResetController extends AbstractController
 
         // Send email with reset link
         $email = (new Email())
-            ->from('youness@example.com')
+            ->from('youness@example.ma')
             ->to($user->getEmail())
             ->subject('Your password reset request')
             ->html('<p>To reset your password, please click the following link: <a href="http://localhost:8000/reset-password-page/' . $token->getToken() . '">Reset Password</a></p>');
