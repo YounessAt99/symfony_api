@@ -24,7 +24,6 @@ class AuthorController extends AbstractController
         private readonly BookRepository $bookRepository
     ){}
 
-
     #[Route('/api/author', name: 'app_author', methods:['GET'])]
     #[IsGranted("ROLE_ADMIN", message:'Vous n\'avez pas les droits suffisants pour éditer un livre')]
     public function index(): JsonResponse
